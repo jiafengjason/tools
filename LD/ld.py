@@ -15,7 +15,7 @@ pyautogui.PAUSE = 0.1
 pyautogui.FAILSAFE = True
 
 SID=0
-LDFolder = 'LD2'
+LDFolder = 'LD4'
 stat = {}
 if os.path.exists('stat.json'):
     jsObj = open('stat.json').read()
@@ -81,7 +81,7 @@ def click(location,double=1):
     return xPoint,yPoint
 
 def startLD():
-    location=findPic('ld.jpg')
+    location=findPic(os.path.join(LDFolder,'ld.jpg'))
     click(location,2)
 
 def startVM(id):
@@ -137,9 +137,9 @@ def returnHome():
             break
 
 def clean():
-    location=findPic('switch.jpg')
+    location=findPic(os.path.join(LDFolder,'switch.jpg'))
     click(location)
-    location=findPic('clean.jpg')
+    location=findPic(os.path.join(LDFolder,'clean.jpg'))
     click(location)
 
 def getJson(node, count, rev=False):
