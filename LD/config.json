@@ -1,11 +1,13 @@
 {
     "island": {
-    "ll": "#fFAUJ9eyZb@"
+    "ll": "#MDrz363NNb%",
+    "rr": "#R1N7M6JuVb%",
+    "nn": "%e5qJ6BmaAa!"
     },
     "fruit": {
-    "nn": "#2CByb7mEUb%",
-    "yy": "гдz3f23BrZba%",
-    "rr": "%N1zvb6IIIa@"
+    "nn": "гд24N7e3yRFa%",
+    "yy": "%q1ZjM3F6aa!",
+    "rr": "#E6M7QDbuBa%"
     },
     "zd": {
     "yy": "#e9MVVA7EYb@",
@@ -19,9 +21,9 @@
     "xh2": "#n4M332jYfa%"
     },
     "jt": {
-    "yy": "%e4uzFBaIUb!",
-    "rr": "#V8NbYCnY7a@",
-    "nn": "гдM4Fmi4IMja%"
+    "ll": "#yEzJeBYvNb@",
+    "yy": "%e4uzFBaIUb@",
+    "nn": "%M4Fmi4IMja@"
     },
     "yjt": {
     "1": "гд68uvn4YBIa%"
@@ -30,5 +32,10 @@
     "yy": "%VCV7247AQb@",
     "ll": "гдI22bq3rjUb%",
     "nn": "#36NB2AFQJa@"
+    },
+    "dg": {
+    "1": "гд35ZF2EVVRb%",
+    "2": "%b4MfUFVNna@",
+    "3": "#u3bM3AvBEa@"
     }
 }

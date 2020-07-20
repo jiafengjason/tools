@@ -17,9 +17,6 @@ pyautogui.FAILSAFE = True
 SID=0
 LDFolder = 'LD4'
 stat = {}
-if os.path.exists('stat.json'):
-    jsObj = open('stat.json').read()
-    stat = json.loads(jsObj)
 
 width, height = pyautogui.size()
 print('Current width:%s, height:%s' % (width, height))
@@ -86,6 +83,7 @@ def startLD():
 
 def startVM(id):
     location=findPic(os.path.join(LDFolder,'lddkq.jpg'),cfd=0.5)
+    print(location)
     if not location:
         startLD()
         location=findPic(os.path.join(LDFolder,'lddkq.jpg'),cfd=0.5)
@@ -126,9 +124,16 @@ def closeVM():
         click(location)
 
 def startAPP(appName):
-    imageFile = os.path.join('APP','%s.jpg' % appName)
-    location=findPic(imageFile,100)
-    click(location)
+    flag = False
+    while 1:
+        imageFile = os.path.join('APP','%s.jpg' % appName)
+        location=findPic(imageFile,1)
+        if location:
+            flag = True
+            click(location)
+        if flag and not findPic(imageFile,1):
+            break
+        time.sleep(0.5)
 
 def returnHome():
     while 1:
@@ -144,19 +149,19 @@ def clean():
 
 def getJson(node, count, rev=False):
     if os.path.exists('config.json'):
+        print("2")
         jsObj = open('config.json').read()
         config = json.loads(jsObj)
         dic = config[node]
         if not os.path.exists('stat.json'):
             for key in dic.keys():
                 stat[key] = 0
-        if not stat:
-            print("sys.exit()")
-            sys.exit()
+        print(stat)
         for item in sorted(stat.items(), key=lambda stat: stat[1], reverse = rev):
             name = item[0]
             if item[1]<count:
                 yield name,dic[name]
+                #pass
 
 def test():
     while 1:
@@ -240,10 +245,13 @@ def zd():
         allVMs.remove(30)
     if 23 in allVMs:
         allVMs.remove(23)
+    allVMs = [id for id in allVMs if id>=SID]
+    allVMs.sort()
+
     for id in allVMs:
+        items = getJson('zd',20)
         startVM(id)
         sucCount = 0
-        items = getJson('zd',20)
         while 1:
             try:
                 name,line = next(items)
@@ -281,6 +289,8 @@ def zd():
                 closeVM()
                 break
         print(stat)
+        if not stat:
+            break
 
 def coin():
     allVMs = list(range(27,38))
@@ -342,12 +352,13 @@ def coin():
     '''
     
 def jt():
-    allVMs = list(range(21,43))
+    allVMs = list(range(1,43))
     if 9 in allVMs:
         allVMs.remove(9)
     if 10 in allVMs:
         allVMs.remove(10)
-    sucCount = 0
+    allVMs = [id for id in allVMs if id>=SID]
+    allVMs.sort()
     for id in allVMs:
         startVM(id)
         sucCount = 0
@@ -383,6 +394,8 @@ def jt():
             
             returnHome()
         print(stat)
+        if not stat:
+            break
 
 def yjt():
     allVMs = list(range(2,37))
@@ -432,13 +445,14 @@ def yjt():
 
 def fruit():
     allVMs = list(range(1,43))
-    #allVMs.reverse()
     if 9 in allVMs:
         allVMs.remove(9)
     if 10 in allVMs:
         allVMs.remove(10)
     if 23 in allVMs:
         allVMs.remove(23)
+    allVMs = [id for id in allVMs if id>=SID]
+    allVMs.sort()
     for id in allVMs:
         startVM(id)
         sucCount = 0
@@ -493,21 +507,15 @@ def fruit():
                 break
             returnHome()
         print(stat)
+        if not stat:
+            break
 
 def island():
-    if SID==0 and os.path.exists('stat.json'):
-        os.remove('stat.json')
-    allVMs = list(range(1,43))
-    if 9 in allVMs:
-        allVMs.remove(9)
-    if 10 in allVMs:
-        allVMs.remove(10)
-    if 23 in allVMs:
-        allVMs.remove(23)
-    allVMs.reverse()
+    allVMs = [2, 3, 4, 5, 6, 8, 11, 13, 14, 15, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42]
+    allVMs = [id for id in allVMs if id>=SID]
+    allVMs.sort()
+    print(allVMs)
     for id in allVMs:
-        if id<SID:
-            continue
         startVM(id)
         sucCount = 0
         items = getJson('island',50, True)
@@ -549,16 +557,63 @@ def island():
                 break
             returnHome()
         print(stat)
-        
+        if not stat:
+            break
+
+def dg():
+    allVMs = [2, 3, 4, 5, 6, 8, 11, 13, 14, 15, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42]
+    allVMs = [id for id in allVMs if id>=SID]
+    allVMs.sort()
+    for id in allVMs:
+        startVM(id)
+        sucCount = 0
+        items = getJson('dg',5, True)
+        while 1:
+            try:
+                name,line = next(items)
+            except:
+                closeVM()
+                break
+
+            print(name,line)
+            pyperclip.copy(line)
+            startAPP('JX')
+            location=findPic(os.path.join('JX','view.jpg'),100)
+            click(location)
+            while 1:
+                location=findPic(os.path.join('JX','dg_finish.jpg'),1)
+                if location:
+                    del stat[name]
+                    saveJson(stat, 'stat.json')
+                    break
+                location=findPic(os.path.join('JX','help.jpg'),1)
+                if location:
+                    click(location)
+                    location=findPic(os.path.join('JX','dg_success.jpg'),10)
+                    if location:
+                        click(location)
+                        sucCount+=1
+                        stat[name] += 1
+                        saveJson(stat, 'stat.json')
+                        print('sucCount:%s' % sucCount)
+                        break
+                time.sleep(1)
+            print(stat)
+            if sucCount>=1:
+                closeVM()
+                break
+            returnHome()
+        print(stat)
+        if not stat:
+            break
+
 def tt():
-    if SID==0 and os.path.exists('stat.json'):
-        os.remove('stat.json')
     allVMs = list(range(1,9))+list(range(14,43))
     if 23 in allVMs:
         allVMs.remove(23)
+    allVMs = [id for id in allVMs if id>=SID]
+    allVMs.sort()
     for id in allVMs:
-        if id<SID:
-            continue
         startVM(id)
         sucCount = 0
         items = getJson('tt',33)
@@ -595,11 +650,14 @@ def tt():
                         print('sucCount:%s' % sucCount)
                         break
                 time.sleep(1)
+            print(stat)
             if sucCount>=3:
                 closeVM()
                 break
             returnHome()
-            print(stat)
+        print(stat)
+        if not stat:
+            break
 
 def wx():
     allVMs = list(range(25,42))
@@ -635,5 +693,10 @@ if __name__ == '__main__':
         if len(sys.argv)>2:
             SID=int(sys.argv[2])
             args = sys.argv[3:]
+        if SID==0 and os.path.exists('stat.json'):
+            os.remove('stat.json')
+        if os.path.exists('stat.json'):
+            jsObj = open('stat.json').read()
+            stat = json.loads(jsObj)
         func = eval(sys.argv[1])
         func(*args)
