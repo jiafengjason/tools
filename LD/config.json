@@ -1,13 +1,9 @@
 {
     "island": {
-    "ll": "#MDrz363NNb%",
-    "rr": "#R1N7M6JuVb%",
-    "nn": "%e5qJ6BmaAa!"
+    "nn": "%QDbe63QBQb!"
     },
     "fruit": {
-    "nn": "£¤24N7e3yRFa%",
-    "yy": "%q1ZjM3F6aa!",
-    "rr": "#E6M7QDbuBa%"
+    "nn": "£¤aDyneBiq7a%"
     },
     "zd": {
     "yy": "#e9MVVA7EYb@",
@@ -15,27 +11,82 @@
     "rr": "%25jAi2mE2b@",
     "ll": "%uBrFm9a2rb@",
     "1": "%r9Zfe8Uz7a!",
-    "2": "£¤UDf6i4yZba%",
-    "3": "£¤EBAYF4qFMb%",
+    "2": "%B4iuvBjEEa!",
     "xh1": "%ZDNRV7FEaa!",
     "xh2": "#n4M332jYfa%"
     },
+    "qm": {
+    "yy": "#F6AAm0yFYb%",
+    "ll": "#A1MN71aq7a%"
+    },
+    "lxj": {
+    "yy": "#aBAQvBneQb@",
+    "rr": "%J3iIi5myVb@",
+    "nn": "#m3iYbEaQzb%"
+    },
+    "wxj": {
+    "1": "£¤u97IQB7a6a%"
+    },
     "jt": {
-    "ll": "#yEzJeBYvNb@",
-    "yy": "%e4uzFBaIUb@",
-    "nn": "%M4Fmi4IMja@"
+    "ll": "%yEzJeBYvNb@",
+    "yy": "%7FEqF6AMJa@",
+    "nn": "#YEZ7QEFufa@"
     },
     "yjt": {
-    "1": "£¤68uvn4YBIa%"
+    "ll": "#n3uv73eAia@",
+    "nn": "#FFmyRBFeAa%",
+    "rr": "§Ô§ÕR5nmA9qRja%",
+    "yy": "#i1UzRENZzb%"
     },
     "tt": {
-    "yy": "%VCV7247AQb@",
-    "ll": "£¤I22bq3rjUb%",
-    "nn": "#36NB2AFQJa@"
+    "yy": "#7Bq7e1Ynma@",
+    "nn": "#E4aMr9zRba@",
+    "rr": "£¤YC7mEDAMfa%"
+    },
+    "fxj": {
+    "yy": "%30zrvDRN3b@",
+    "nn": "#v7ZVj42j2b%",
+    "ll": "%NCBYZ4RJIa!"
+    },
+    "sgj": {
+    "yy": "#YBbURCjyRb@",
+    "rr": "%RDNBQ9VnQb!",
+    "ll": "#aEiqr97qFa%",
+    "nn": "§Ô§ÕR8NVN1V"
+    },
+    "ljd": {
+    "yy": "#A2YnU17AYb@",
+    "rr": "#r7ZB6CyJaa@",
+    "ll": "#y3RjuABAma%",
+    "nn": "§Ô§Õn9aiq1JIea%"
+    },
+    "yy": {
+    "yy": "#Q3JujCaMzb@"
     },
     "dg": {
-    "1": "£¤35ZF2EVVRb%",
-    "2": "%b4MfUFVNna@",
-    "3": "#u3bM3AvBEa@"
+    "1": "£¤a4ubM4Zjia%",
+    "2": "#B12ZZ5rRba%",
+    "3": "%u2BiU7F2fa!",
+    "fanny": "£¤YE3jA1Uzja%"
+    },
+    "zg": {
+    "ll": "%q6JAq2BAEa@",
+    "nn": "£¤Q5VRR0jeAa%",
+    "yy": "£¤b5aiuAJqfa%"
+    },
+    "jhl": {
+    "rr": "£¤27BE6AUzRb%",
+    "ll": "£¤YDZBe2UVja%",
+    "nn": "%MDrRJ26Y3b!",
+    "yy": "%uEnam62Z7a!"
+    },
+    "zns": {
+    "nn": "%uAZRV0BmEa!"
+    },
+    "sh": {
+    "rr": "#u6BiA32bMb@"
+    },
+    "ysq": {
+    "ll": "%jEaiE1UvJa!"
     }
 }

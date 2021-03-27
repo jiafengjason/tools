@@ -19,7 +19,19 @@ def genMath(max,op=None):
         a = random.randint(5,max)
         b = random.randint(0,a)
         return ("%s - %s = " % (a,b))
-    
+
+def genMath10(op=None):
+    if not op:
+        op = random.choice(['+','-'])
+    if op=='+':
+        a = random.randint(0,10)
+        b = 10-a
+        return ("%s + %s = " % (a,b))
+    if op=='-':
+        a = 10
+        b = random.randint(0,10)
+        return ("%s - %s = " % (a,b))
+
 #打开文档
 doc = Document()
 doc.styles['Normal'].font.name = u'宋体'
@@ -85,7 +97,7 @@ hdr_cells[2].text = 'Desc'
 #再增加3行表格元素
 for row in table.rows:
     for cell in row.cells:
-        cell.text = genMath(20)
+        cell.text = genMath(30)
 
 #增加分页
 #doc.add_page_break()

@@ -1,15 +1,9 @@
 {
     "island": {
-    "ll": "%R7nYj8QbAa!",
-    "yy": "#Q5rBy6ZNfa@",
-    "rr": "￥6CMzz7N3Ba%",
-    "nn": "%m523Z2RjUb!"
+    "nn": "%M5FeIFyVFa@"
     },
     "fruit": {
-    "yy2": "#mFuvF4QJia%",
-    "rr2": "#Y9NNn5IYVb@",
-    "ll2": "#N7Rvv9nuBa%",
-    "nn2": "#j2URf0IAYb%"
+    "nn": "￥aDyneBiq7a%"
     },
     "zd": {
     "yy": "#e9MVVA7EYb@",
@@ -17,15 +11,74 @@
     "rr": "%25jAi2mE2b@",
     "ll": "%uBrFm9a2rb@",
     "1": "%r9Zfe8Uz7a!",
-    "2": "￥UDf6i4yZba%",
-    "3": "￥EBAYF4qFMb%"
+    "2": "%B4iuvBjEEa!",
+    "xh1": "%ZDNRV7FEaa!",
+    "xh2": "#n4M332jYfa%"
+    },
+    "qm": {
+    "ll": "￥rANvZErfIa%",
+    "yy": "%I4uvJ0qnIa@"
     },
     "jt": {
-    "hu": "￥i6YJQBbufa%",
-    "166": "%a0imM1FY3b!",
-    "131": "#i7UJQ2bE6a%"
+    "ll": "%yEzJeBYvNb@",
+    "yy": "#e4uzFBaIUb@",
+    "nn": "%M4Fmi4IMja!"
     },
     "yjt": {
-    "1": "￥68uvn4YBIa%"
+    "ll": "#n3uv73eAia@",
+    "nn": "#FFmyRBFeAa%",
+    "rr": "гдR5nmA9qRja%",
+    "yy": "#i1UzRENZzb%"
+    },
+    "tt": {
+    "yy": "#z7VZb4uVzb@",
+    "nn": "#m1eAUFNVBa%",
+    "ll": "#BEUn29neIa%"
+    },
+    "fxj": {
+    "yy": "%F8UbE52RFa@",
+    "nn": "%F7MzV7rNNb!",
+    "ll": "#E8mUn8iq7a%"
+    },
+    "sgj": {
+    "yy": "#YBbURCjyRb@",
+    "rr": "%RDNBQ9VnQb!",
+    "ll": "#aEiqr97qFa%",
+    "nn": "гдR8NVN1V"
+    },
+    "ljd": {
+    "yy": "#A2YnU17AYb@",
+    "rr": "#r7ZB6CyJaa@",
+    "ll": "#y3RjuABAma%",
+    "nn": "гдn9aiq1JIea%"
+    },
+    "yy": {
+    "yy": "#Q3JujCaMzb@"
+    },
+    "dg": {
+    "1": "￥a4ubM4Zjia%",
+    "2": "#B12ZZ5rRba%",
+    "3": "%u2BiU7F2fa!",
+    "fanny": "￥YE3jA1Uzja%"
+    },
+    "zg": {
+    "ll": "%q6JAq2BAEa@",
+    "nn": "￥Q5VRR0jeAa%",
+    "yy": "￥b5aiuAJqfa%"
+    },
+    "jhl": {
+    "rr": "￥27BE6AUzRb%",
+    "ll": "￥YDZBe2UVja%",
+    "nn": "%MDrRJ26Y3b!",
+    "yy": "%uEnam62Z7a!"
+    },
+    "zns": {
+    "nn": "%uAZRV0BmEa!"
+    },
+    "sh": {
+    "rr": "#u6BiA32bMb@"
+    },
+    "ysq": {
+    "ll": "%jEaiE1UvJa!"
     }
 }

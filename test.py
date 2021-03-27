@@ -1,27 +1,20 @@
-﻿#!/usr/bin/env python
-# codeing=utf-8
+﻿from functools import lru_cache
 
-#使用pickle模块将数据对象保存到文件
+def getUserId(id):
+    return id+1
+    
+def getDevId(id):
+    return id+2
 
-import pickle
-
-data1 = {'a': [1, 2.0, 3, 4+6j],
-         'b': ('string', u'Unicode string'),
-         'c': None}
-
-selfref_list = [1, 2, 3]
-selfref_list.append(selfref_list)
-
-output = open('data.pkl', 'wb') change
-
-test add
-
-# Pickle dictionary using protocol 0.
-pickle.dump(data1, output)
-
-pickle.dump(selfref_list, output, -1)
-
-output.close()
+@lru_cache()
+def commonGet(getFunc,id):
+    print(str(getFunc))
+    return getFunc(id)
     
     
-    
+print(commonGet(getUserId,1))
+print(commonGet(getUserId,2))
+print(commonGet(getUserId,1))
+print(commonGet(getDevId,1))
+print(commonGet(getDevId,2))
+print(commonGet(getDevId,1))
