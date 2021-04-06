@@ -28,7 +28,8 @@ APPS = {
     "JD" : "com.jingdong.app.mall",
     "JR" : "com.jd.jrapp",
     "JS" : "com.jd.jdlite",
-    "JX" : "com.jd.pingou"
+    "JX" : "com.jd.pingou",
+    "SN" : "com.suning.mobile.ebuy"
 }
 
 width, height = pyautogui.size()
@@ -106,8 +107,23 @@ def inAndroid(id):
         return 0
     line = sp[id]
     #print(line)
-    flag = str(line,'utf-8').split(",")[4]
+    flag = str(line,'gb2312').split(",")[4]
     return int(flag)
+
+def createVM(id):
+    os.system("%s add" % (LDConsle))
+
+def newVM():
+    cmd = "%s list2" % (LDConsle)
+    p = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+    out,err = p.communicate()
+    sp = out.splitlines()
+    id = len(sp)
+    
+    createVM(id)
+    startVM(id)
+    for appName,packagename in APPS.items():
+        installApp(id, appName)
 
 def startVM(id):
     os.system("%s launch --index %d" % (LDConsle, id))
@@ -131,6 +147,9 @@ def runApp(id, appName):
 
 def killApp(id, appName):
     os.system("%s killapp --index %d --packagename %s" % (LDConsle, id, APPS[appName]))
+
+def installApp(id, appName):
+    os.system("%s installapp --index %d --filename apk/%s.apk" % (LDConsle, id, appName))
 
 def returnHome(id, appName):
     '''
@@ -323,7 +342,12 @@ def tx():
         time.sleep(0.5)
 
 def test():
-    rebootVM(13)
+    newVM()
+
+def batch():
+    island()
+    lxj()
+    qm()
 
 #种豆
 def zd():
@@ -345,6 +369,7 @@ def lxj():
     pics['view'] = 'view.jpg'
     pics['help'] = 'lxj_help.jpg'
     pics['success'] = 'lxj_success.jpg'
+    pics['finish'] = 'lxj_finish.jpg'
     template('JD', 'lxj', pics, 100, 3)
     
 def wxj():
