@@ -96,11 +96,11 @@ def clickPic(image,timeout=3,cfd=0.7,double=1):
 
 def inAndroid(id):
     cmd = "%s list2" % (LDConsle)
-    print(cmd)
+    #print(cmd)
     p = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
     out,err = p.communicate()
     sp = out.splitlines()
-    print(sp[id])
+    #print(sp[id])
     if id>=len(sp):
         print(id, len(sp))
         return 0
@@ -132,16 +132,25 @@ def runApp(id, appName):
 def killApp(id, appName):
     os.system("%s killapp --index %d --packagename %s" % (LDConsle, id, APPS[appName]))
 
-def returnHome(id):
+def returnHome(id, appName):
+    '''
     os.system("%s action --index %d --key call.keyboard --value home" % (LDConsle, id))
     if findPic(os.path.join('APP','GAME.jpg'),1):
         break
-
+    '''
+    waitTime = 10
+    count = 0
     while 1:
         os.system("%s action --index %d --key call.keyboard --value back" % (LDConsle, id))
         #pyautogui.press('esc')
         if findPic(os.path.join('APP','GAME.jpg'),1):
             break
+        count += 1
+        if count%10 == 0:
+            killApp(id, appName)
+            waitTime = 60
+            break
+    return waitTime
 
 def clean():
     location=findPic(os.path.join(LDFolder,'switch.jpg'))
@@ -165,7 +174,7 @@ def tokenIter(task, id, count=100, rev=False):
         name = item[0]
         if item[1]<count and VmStat[id][name]==0:
             yield name,dic[name]
-        elif item[1]==count:
+        elif item[1]>=count:
             if name in TaskStat:
                 del TaskStat[name]
                 saveJson(TaskStat, 'taskStat.json')
@@ -179,23 +188,23 @@ def picIter(pics):
         
 def failIter(task, id):
     for name,suc in VmStat[id].items():
-        if not suc:
+        if name in TaskStat and not suc:
             yield name, Config[task][name]
 
 def getList(app, reverse=False):
     allIds = []
     if app=="JD":
-        allIds = list(range(13,EID)) + [1, 2, 5]
+        allIds = list(range(13,EID)) + [2, 5]
         removeIds = [23, 43, 53]
     if app=="JS":
-        allIds = list(range(1,10))+list(range(14,EID))
+        allIds = list(range(2,10))+list(range(14,EID))
         removeIds = [3, 4, 6, 7, 8, 23, 27, 29, 43, 47, 53]
     if app=="JR":
-        allIds = list(range(1,EID))
+        allIds = list(range(2,EID))
         removeIds = [10, 27, 43]
     if app=="JX":
-        allIds = list(range(1,53))
-        removeIds = [2, 3, 4, 5, 6, 9, 10, 23, 34, 38] + list(range(41,44))
+        allIds = list(range(7,53))
+        removeIds = [9, 10, 23, 34, 38] + list(range(41,44))
     allIds = list(set(allIds) - set(removeIds))
     allIds = [id for id in allIds if id>=SID]
     allIds.sort()
@@ -204,10 +213,11 @@ def getList(app, reverse=False):
     print(allIds)
     return allIds
 
-def template(app, task, pics, maxHitCount=100, maxHelpCount=3, rev=False):
-    allVMs = getList(app, rev)
+def template(appName, task, pics, maxHitCount=100, maxHelpCount=3, rev=False):
+    allVMs = getList(appName, rev)
     
     for id in allVMs:
+        waitTime = 60
         limit = 0
         firstLoad = True
         startVM(id)
@@ -224,59 +234,60 @@ def template(app, task, pics, maxHitCount=100, maxHelpCount=3, rev=False):
                     break
             print(name,line)
             pyperclip.copy(line)
-            runApp(id, app)
+            runApp(id, appName)
             start = time.time()
             location = None
             while not location:
                 end = time.time()
                 duration = end - start
                 print("duration:%d(%d)" % (duration,firstLoad))
-                if (firstLoad and duration>30) or ((not firstLoad) and duration>5):
+                if duration>waitTime:
                     pyperclip.copy(line)
-                    returnHome(id)
-                    runApp(id, app)
-                    firstLoad = False
+                    waitTime = returnHome(id, appName)
+                    runApp(id, appName)
                     start = time.time()
-                location=findPic(os.path.join(app,pics['view']),1)
+                location=findPic(os.path.join(appName,pics['view']),1)
                 if location:
-                    firstLoad = False
+                    waitTime = 10
                     start = time.time()
                     break
                 if 'update' in pics:
-                    updateLocation = findPic(os.path.join(app,pics['update']),1)
+                    updateLocation = findPic(os.path.join(appName,pics['update']),1)
                     if updateLocation:
                         click(updateLocation)
                 time.sleep(0.5)
             click(location)
             if 'help' in pics:
                 for i in range(10):
-                    location=findPic(os.path.join(app,pics['help']))
+                    location=findPic(os.path.join(appName,pics['help']))
                     if location:
                         click(location)
                         break
             isSuc = False
             for i in range(25):
                 if isinstance(pics['success'],str):
-                    if findPic(os.path.join(app,pics['success']),1):
-                        TaskStat[name] += 1
+                    if findPic(os.path.join(appName,pics['success']),1):
+                        if name in TaskStat:
+                            TaskStat[name] += 1
                         VmStat[id][name]=1
                         break
                 elif isinstance(pics['success'],list):
                     for pic in pics['success']:
-                        if findPic(os.path.join(app,pic),1):
-                            TaskStat[name] += 1
+                        if findPic(os.path.join(appName,pic),1):
+                            if name in TaskStat:
+                                TaskStat[name] += 1
                             VmStat[id][name]=1
                             isSuc = True
                             break
                     if isSuc:
                         break
                 if 'finish' in pics:
-                    if findPic(os.path.join(app,pics['finish']),1):
+                    if findPic(os.path.join(appName,pics['finish']),1):
                         if name in TaskStat:
                             del TaskStat[name]
                         break
                 if 'limit' in pics:
-                    if findPic(os.path.join(app,pics['limit']),1):
+                    if findPic(os.path.join(appName,pics['limit']),1):
                         limit = 1
                         break
                 time.sleep(0.5)
@@ -290,7 +301,7 @@ def template(app, task, pics, maxHitCount=100, maxHelpCount=3, rev=False):
             if sucCount>=maxHelpCount or limit:
                 closeVM(id)
                 break
-            returnHome(id)
+            returnHome(id, appName)
         
         closeVM(id)
         print(VmStat)
@@ -427,9 +438,8 @@ def tt():
     
     for id in allVMs:
         startVM(id)
-        VmStat[id]={}
-        items = tokenIter('tt',100)
-        failItems = failIter(id)
+        items = tokenIter('tt', id, 100)
+        failItems = failIter('tt',id)
         while 1:
             try:
                 name,line = next(items)
@@ -445,18 +455,18 @@ def tt():
             location=findPic(os.path.join('JS','view.jpg'),100)
             while not location:
                 pyperclip.copy(line)
-                returnHome(id)
+                returnHome(id, "JS")
                 runApp(id, 'JS')
                 location=findPic(os.path.join('JS','view.jpg'),3)
             click(location)
-            for i in range(5):
+            for i in range(10):
                 location=findPic(os.path.join('JS','finish.jpg'),1)
                 if location:
                     del TaskStat[name]
                     break
                 location=findPic(os.path.join('JS','cannot.jpg'),1)
                 if location:
-                    returnHome(id)
+                    returnHome(id, "JS")
                     break
                 location=findPic(os.path.join('JS','help.jpg'),1)
                 if location:
@@ -465,20 +475,20 @@ def tt():
                     if location:
                         click(location)
                         TaskStat[name] += 1
-                        VmStat[id][name]=0
+                        VmStat[id][name]=1
                         break
                 time.sleep(1)
             else:
-                VmStat[id][name]=line
+                VmStat[id][name]=0
             print(TaskStat)
-            sucCount = list(VmStat[id].values()).count(0)
+            sucCount = list(VmStat[id].values()).count(1)
             print('sucCount:%s' % sucCount)
             saveJson(TaskStat, 'taskStat.json')
             saveJson(VmStat, 'vmStat.json')
             if sucCount>=3:
                 closeVM(id)
                 break
-            returnHome(id)
+            returnHome(id, "JS")
         print(VmStat)
         if not TaskStat:
             break
