@@ -45,6 +45,14 @@ def saveJson(data,jsFile):
     fileObj.write(jsObj)
     fileObj.close()
 
+def cleanStat():
+    if os.path.exists('taskStat.json'):
+        os.remove('taskStat.json')
+    if os.path.exists('vmStat.json'):
+        os.remove('vmStat.json')
+    TaskStat = {}
+    VmStat = {}
+
 def findAllPics(image,expect,cfd=0.7):
     timeout = 1
     while 1:
@@ -158,17 +166,31 @@ def returnHome(id, appName):
         break
     '''
     waitTime = 10
-    count = 0
+    isKill = False
+    isReboot = False
+    start = time.time()
     while 1:
-        os.system("%s action --index %d --key call.keyboard --value back" % (LDConsle, id))
-        #pyautogui.press('esc')
-        if findPic(os.path.join('APP','GAME.jpg'),1):
-            break
-        count += 1
-        if count%10 == 0:
+        end = time.time()
+        duration = end - start
+        print(duration)
+        if (not isKill) and (not isReboot):
+            os.system("%s action --index %d --key call.keyboard --value back" % (LDConsle, id))
+            #pyautogui.press('esc')
+        if (not isKill) and duration>10:
+            print("killApp %s" % appName)
             killApp(id, appName)
             waitTime = 60
+            isKill = True
+            start = time.time()
+        elif isKill and (not isReboot) and duration>10:
+            print("rebootVM %s" % appName)
+            rebootVM(id)
+            waitTime = 60
+            isReboot = True
+            start = time.time()
+        if findPic(os.path.join('APP','GAME.jpg'),1):
             break
+
     return waitTime
 
 def clean():
@@ -252,6 +274,10 @@ def template(appName, task, pics, maxHitCount=100, maxHelpCount=3, rev=False):
                     closeVM(id)
                     break
             print(name,line)
+            if findPic(os.path.join(LDFolder, "error.jpg"),1):
+                location=findPic(os.path.join(LDFolder, "ok.jpg"),1)
+                if location:
+                    click(location)
             pyperclip.copy(line)
             runApp(id, appName)
             start = time.time()
@@ -263,8 +289,8 @@ def template(appName, task, pics, maxHitCount=100, maxHelpCount=3, rev=False):
                 if duration>waitTime:
                     pyperclip.copy(line)
                     waitTime = returnHome(id, appName)
-                    runApp(id, appName)
                     start = time.time()
+                    runApp(id, appName)
                 location=findPic(os.path.join(appName,pics['view']),1)
                 if location:
                     waitTime = 10
@@ -342,11 +368,13 @@ def tx():
         time.sleep(0.5)
 
 def test():
-    newVM()
+    returnHome(1, "JD")
 
 def batch():
     island()
+    cleanStat()
     lxj()
+    cleanStat()
     qm()
 
 #种豆
@@ -369,7 +397,7 @@ def lxj():
     pics['view'] = 'view.jpg'
     pics['help'] = 'lxj_help.jpg'
     pics['success'] = 'lxj_success.jpg'
-    pics['finish'] = 'lxj_finish.jpg'
+    #pics['finish'] = 'lxj_finish.jpg'
     template('JD', 'lxj', pics, 100, 3)
     
 def wxj():
@@ -556,10 +584,7 @@ if __name__ == '__main__':
             SID=int(sys.argv[2])
             args = sys.argv[3:]
         if SID==0:
-            if os.path.exists('taskStat.json'):
-                os.remove('taskStat.json')
-            if os.path.exists('vmStat.json'):
-                os.remove('vmStat.json')
+            cleanStat()
         if os.path.exists('taskStat.json'):
             jsObj = open('taskStat.json').read()
             TaskStat = json.loads(jsObj)
