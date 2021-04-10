@@ -246,6 +246,9 @@ def getList(app, reverse=False):
     if app=="JX":
         allIds = list(range(7,53))
         removeIds = [9, 10, 23, 34, 38] + list(range(41,44))
+    if app=="WX":
+        allIds = [13,14]+list(range(25,40))+list(range(44,67))
+        removeIds = [26, 30, 31, 34, 38] + list(range(54,59))
     allIds = list(set(allIds) - set(removeIds))
     allIds = [id for id in allIds if id>=SID]
     allIds.sort()
@@ -254,6 +257,12 @@ def getList(app, reverse=False):
     print(allIds)
     return allIds
 
+def handleError():
+    if findPic(os.path.join(LDFolder, "error.jpg"),1):
+        location=findPic(os.path.join(LDFolder, "ok.jpg"),1)
+        if location:
+            click(location)
+                    
 def template(appName, task, pics, maxHitCount=100, maxHelpCount=3, rev=False):
     allVMs = getList(appName, rev)
     
@@ -262,6 +271,7 @@ def template(appName, task, pics, maxHitCount=100, maxHelpCount=3, rev=False):
         limit = 0
         firstLoad = True
         startVM(id)
+        handleError()
         items = tokenIter(task, id, maxHitCount, rev)
         failItems = failIter(task, id)
         while 1:
@@ -274,10 +284,6 @@ def template(appName, task, pics, maxHitCount=100, maxHelpCount=3, rev=False):
                     closeVM(id)
                     break
             print(name,line)
-            if findPic(os.path.join(LDFolder, "error.jpg"),1):
-                location=findPic(os.path.join(LDFolder, "ok.jpg"),1)
-                if location:
-                    click(location)
             pyperclip.copy(line)
             runApp(id, appName)
             start = time.time()
@@ -547,22 +553,27 @@ def tt():
             break
 
 def wx():
-    allIds = [13,14]+list(range(25,40))+list(range(44,64))
-    removeIds = [26, 30, 31, 34, 38] + list(range(54,59))
-    allIds = list(set(allIds) - set(removeIds))
-    allIds = [id for id in allIds if id>=SID]
-    allIds.sort()
-    for id in allIds:
+    allVMs = getList("WX")
+    '''
+    for i in range(0,len(allVMs),3):
+        group=allVMs[i:i+3]
+        for id in group:
+            startVM(id)
+            runApp(id, "WX")
+        time.sleep(60)
+        for id in group:
+            closeVM(id)
+    '''
+    index = 0
+    for id in allVMs:
         startVM(id)
-        while 1:
-            if findPic(os.path.join('APP','GAME.jpg'),1):
-                location = findPic(os.path.join('APP','WX.jpg'),1)
-                if location:
-                    click(location)
-                    time.sleep(60)
-                    break
-            time.sleep(1)
-        closeVM(id)
+        runApp(id, "WX")
+        if index>=2:
+            closeVM(allVMs[index-2])
+        time.sleep(30)
+        index += 1
+    time.sleep(60)
+    closeAllVM()
 
 def compare_image(path_image1, path_image2):
     imageA = cv2.imread(path_image1)
