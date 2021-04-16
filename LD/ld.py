@@ -10,6 +10,7 @@ import datetime
 import json
 import math
 import subprocess
+import requests
 from skimage.measure import compare_ssim
 import cv2
 pyautogui.PAUSE = 0.1
@@ -262,7 +263,24 @@ def handleError():
         location=findPic(os.path.join(LDFolder, "ok.jpg"),1)
         if location:
             click(location)
-                    
+
+def shutdown():
+    os.system("shutdown -s -t 0")
+
+def sendWechatMsg(title, msg):
+    header = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                      'Chrome/57.0.2987.133 Safari/537.36'
+    }
+    url = "http://sc.ftqq.com/%s.send?text=%s&desp=%s" % ("SCU158650T62000825c439e9943dec882afcd51314601e0c3e70306", title, msg)
+    session = requests.Session()
+    response = session.get(url, headers=header, allow_redirects=False)
+    body = json.loads(str(response.content, encoding = "utf-8"))
+    if int(body["errno"]):
+        print("Send wechat message error:%s" % body["errmsg"])
+    else:
+        print("Send wechat message success!")
+
 def template(appName, task, pics, maxHitCount=100, maxHelpCount=3, rev=False):
     allVMs = getList(appName, rev)
     
@@ -359,6 +377,7 @@ def template(appName, task, pics, maxHitCount=100, maxHelpCount=3, rev=False):
         if not TaskStat:
             break
     closeAllVM()
+    sendWechatMsg(task, "finish!")
 
 def tx():
     #pics = ['ktx.jpg', 'wxlq.jpg', 'ty.jpg', 'wzdl.jpg']
@@ -374,7 +393,7 @@ def tx():
         time.sleep(0.5)
 
 def test():
-    returnHome(1, "JD")
+    sendWechatMsg("ZD", "finish")
 
 def batch():
     island()
@@ -396,7 +415,7 @@ def qm():
     pics = {}
     pics['view'] = 'view.jpg'
     pics['success'] = ['qm_success.jpg', 'qm_success1.jpg']
-    template('JD', 'qm', pics, 58, 2)
+    template('JD', 'qm', pics, 100, 1)
 
 def lxj():
     pics = {}
@@ -448,7 +467,7 @@ def dg():
     pics = {}
     pics['view'] = 'view.jpg'
     pics['help'] = 'help.jpg'
-    pics['success'] = ['dg_success.jpg', 'dg_success1.jpg']
+    pics['success'] = ['dg_success.jpg', 'dg_success1.jpg', 'dg_success2.jpg', 'dg_success3.jpg']
     pics['finish'] = 'dg_finish.jpg'
     template('JX', 'dg', pics, 5, 1)
 
