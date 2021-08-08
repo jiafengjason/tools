@@ -13,12 +13,16 @@ import subprocess
 import requests
 from skimage.measure import compare_ssim
 import cv2
+import win32con
+import win32gui
+
 pyautogui.PAUSE = 0.1
 pyautogui.FAILSAFE = True
 
 SID=0
-EID=67
+EID=76
 LDFolder = 'LD4'
+VmInfo = {}
 TaskStat = {}
 VmStat = {}
 Config = {}
@@ -27,7 +31,7 @@ APPS = {
     "QQ" : "com.tencent.mobileqq",
     "WX" : "com.tencent.mm",
     "JD" : "com.jingdong.app.mall",
-    "JR" : "com.jd.jrapp",
+    #"JR" : "com.jd.jrapp",
     "JS" : "com.jd.jdlite",
     "JX" : "com.jd.pingou",
     "SN" : "com.suning.mobile.ebuy"
@@ -136,6 +140,8 @@ def newVM():
 
 def startVM(id):
     os.system("%s launch --index %d" % (LDConsle, id))
+    
+def checkVMRunning(id):
     while 1:
         flag=inAndroid(id)
         if flag:
@@ -150,6 +156,40 @@ def rebootVM(id):
 
 def closeAllVM():
     os.system("%s quitall" % (LDConsle))
+
+def getAllVMsInfo():
+    p=os.popen("%s list2" % (LDConsle))
+    buf=p.read()
+    for line in buf.splitlines():
+        items = line.split(",")
+        VmInfo[items[0]]=items[1]
+    p.close()
+
+def getRunVMsNum():
+    p=os.popen("%s runninglist" % (LDConsle))
+    buf=p.read()
+    print(len(buf.splitlines()))
+    p.close()
+
+def minVM(id):
+    hwnd = win32gui.FindWindow("LDPlayerMainFrame", VmInfo[str(id)])
+
+    if hwnd == 0:
+        print("Can't find window:%s" % VmInfo[str(id)])
+        return
+    
+    win32gui.ShowWindow(hwnd, win32con.SW_SHOWMINIMIZED)
+    win32gui.SetForegroundWindow(hwnd)  # 设置前置窗口
+    
+def normalVM(id):
+    hwnd = win32gui.FindWindow("LDPlayerMainFrame", VmInfo[str(id)])
+
+    if hwnd == 0:
+        print("Can't find window:%s" % VmInfo[str(id)])
+        return
+    
+    win32gui.ShowWindow(hwnd, win32con.SW_SHOWNORMAL)
+    win32gui.SetForegroundWindow(hwnd)  # 设置前置窗口
 
 def runApp(id, appName):
     os.system("%s runapp --index %d --packagename %s" % (LDConsle, id, APPS[appName]))
@@ -236,11 +276,11 @@ def failIter(task, id):
 def getList(app, reverse=False):
     allIds = []
     if app=="JD":
-        allIds = list(range(13,EID)) + [2, 5]
-        removeIds = [23, 43, 53]
+        allIds = list(range(2,7)) + list(range(9,EID))
+        removeIds = [10, 12, 43, 47, 53]
     if app=="JS":
-        allIds = list(range(2,10))+list(range(14,EID))
-        removeIds = [3, 4, 6, 7, 8, 23, 27, 29, 43, 47, 53]
+        allIds = list(range(2,10))+list(range(13,EID))+ [11]
+        removeIds = [7, 8, 43, 47, 53]
     if app=="JR":
         allIds = list(range(2,EID))
         removeIds = [10, 27, 43]
@@ -248,7 +288,7 @@ def getList(app, reverse=False):
         allIds = list(range(7,53))
         removeIds = [9, 10, 23, 34, 38] + list(range(41,44))
     if app=="WX":
-        allIds = [13,14]+list(range(25,40))+list(range(44,67))
+        allIds = [2,3,6,13,14]+list(range(25,40))+list(range(44,70))
         removeIds = [26, 30, 31, 34, 38] + list(range(54,59))
     allIds = list(set(allIds) - set(removeIds))
     allIds = [id for id in allIds if id>=SID]
@@ -256,6 +296,7 @@ def getList(app, reverse=False):
     if reverse:
         allIds.reverse()
     print(allIds)
+    print(len(allIds))
     return allIds
 
 def handleError():
@@ -284,11 +325,17 @@ def sendWechatMsg(title, msg):
 def template(appName, task, pics, maxHitCount=100, maxHelpCount=3, rev=False):
     allVMs = getList(appName, rev)
     
-    for id in allVMs:
+    id = allVMs[0]
+    startVM(allVMs[0])
+    del allVMs[0]
+    for nextId in allVMs:
         waitTime = 60
         limit = 0
         firstLoad = True
-        startVM(id)
+        startVM(nextId)
+        checkVMRunning(id)
+        normalVM(id)
+        minVM(nextId)
         handleError()
         items = tokenIter(task, id, maxHitCount, rev)
         failItems = failIter(task, id)
@@ -374,6 +421,7 @@ def template(appName, task, pics, maxHitCount=100, maxHelpCount=3, rev=False):
         
         closeVM(id)
         print(VmStat)
+        id = nextId
         if not TaskStat:
             break
     closeAllVM()
@@ -396,11 +444,12 @@ def test():
     sendWechatMsg("ZD", "finish")
 
 def batch():
-    island()
+    zg()
     cleanStat()
-    lxj()
+    dg()
     cleanStat()
-    qm()
+    fxj()
+    shutdown()
 
 #种豆
 def zd():
@@ -415,15 +464,15 @@ def qm():
     pics = {}
     pics['view'] = 'view.jpg'
     pics['success'] = ['qm_success.jpg', 'qm_success1.jpg']
-    template('JD', 'qm', pics, 100, 1)
+    template('JD', 'qm', pics, 58, 1)
 
 def lxj():
     pics = {}
     pics['view'] = 'view.jpg'
     pics['help'] = 'lxj_help.jpg'
     pics['success'] = 'lxj_success.jpg'
-    #pics['finish'] = 'lxj_finish.jpg'
-    template('JD', 'lxj', pics, 100, 3)
+    pics['finish'] = 'lxj_finish.jpg'
+    template('JD', 'lxj', pics, 45, 3)
     
 def wxj():
     pics = {}
@@ -460,7 +509,47 @@ def fxj():
     pics = {}
     pics['view'] = 'view.jpg'
     pics['success'] = ['fxj_success.jpg', 'fxj_success1.jpg']
-    template('JD', 'fxj', pics, 50, 3)
+    template('JD', 'fxj', pics, 55, 3)
+
+def hb():
+    pics = {}
+    pics['view'] = 'view.jpg'
+    pics['help'] = 'hb_help.jpg'
+    pics['success'] = ['hb_success.jpg']
+    pics['finish'] = 'hb_finish.jpg'
+    template('JD', 'hb', pics, 25, 4)
+
+def dgs():
+    pics = {}
+    pics['view'] = 'view.jpg'
+    pics['help'] = 'hb_help.jpg'
+    pics['success'] = ['hb_success.jpg', 'hb_success1.jpg']
+    pics['finish'] = 'hb_finish.jpg'
+    template('JD', 'dgs', pics, 21, 1)
+
+def ydh():
+    pics = {}
+    pics['view'] = 'view.jpg'
+    pics['help'] = 'ydh_help.jpg'
+    pics['success'] = ['ydh_success.jpg', 'ydh_success1.jpg']
+    pics['finish'] = 'ydh_finish.jpg'
+    template('JD', 'ydh', pics, 10, 3)
+
+def by():
+    pics = {}
+    pics['view'] = 'view.jpg'
+    pics['help'] = 'ydh_help.jpg'
+    pics['success'] = ['ydh_success.jpg', 'ydh_success1.jpg']
+    pics['finish'] = 'ydh_finish.jpg'
+    template('JD', 'by', pics, 100, 3)
+
+def qjd():
+    pics = {}
+    pics['view'] = 'view.jpg'
+    pics['help'] = 'qjd_help.jpg'
+    pics['success'] = ['qjd_success.jpg']
+    pics['finish'] = 'qjd_finish.jpg'
+    template('JD', 'qjd', pics, 100, 3)
 
 #打工
 def dg():
@@ -496,6 +585,22 @@ def ttN():
     pics['success'] = 'success.jpg'
     template('JS', 'tt', pics)
     
+def sqdyj():
+    pics = {}
+    pics['view'] = 'view.jpg'
+    pics['help'] = 'sqdyj_help.jpg'
+    pics['success'] = ['sqdyj_success.jpg', 'sqdyj_success1.jpg']
+    pics['finish'] = 'sqdyj_finish.jpg'
+    template('JS', 'sqdyj', pics, 100, 1)
+
+def sqdyjtx():
+    pics = {}
+    pics['view'] = 'view.jpg'
+    pics['help'] = 'sqdyjtx_help.jpg'
+    pics['success'] = 'sqdyjtx_success.jpg'
+    #pics['finish'] = 'sqdyj_finish.jpg'
+    template('JS', 'sqdyjtx', pics, 50, 3)
+    
 def tt():
     '''
     for id in [11,12,13]:
@@ -528,19 +633,21 @@ def tt():
                     closeVM(id)
                     break
             print(name,line)
-            pyperclip.copy(line)
-            runApp(id, 'JS')
-            location=findPic(os.path.join('JS','view.jpg'),100)
-            while not location:
+
+            for i in range(10):
                 pyperclip.copy(line)
-                returnHome(id, "JS")
                 runApp(id, 'JS')
-                location=findPic(os.path.join('JS','view.jpg'),3)
-            click(location)
+                location=findPic(os.path.join('JS','view.jpg'),30)
+                if location:
+                    click(location)
+                    break
+                returnHome(id, "JS")
+
             for i in range(10):
                 location=findPic(os.path.join('JS','finish.jpg'),1)
                 if location:
-                    del TaskStat[name]
+                    if name in TaskStat:
+                        del TaskStat[name]
                     break
                 location=findPic(os.path.join('JS','cannot.jpg'),1)
                 if location:
@@ -549,11 +656,40 @@ def tt():
                 location=findPic(os.path.join('JS','help.jpg'),1)
                 if location:
                     click(location)
-                    location=findPic(os.path.join('JS','success.jpg'),30)
-                    if location:
-                        click(location)
-                        TaskStat[name] += 1
-                        VmStat[id][name]=1
+                    suc = False
+                    for i in range(30):
+                        location=findPic(os.path.join('JS','ts1.jpg'),1)
+                        if location:
+                            click(location)
+                        location=findPic(os.path.join('JS','ts2.jpg'),1)
+                        if location:
+                            click(location)
+                        location=findPic(os.path.join('JS','ts3.jpg'),1)
+                        if location:
+                            click(location)
+                        location=findPic(os.path.join('JS','ts4.jpg'),1)
+                        if location:
+                            click(location)
+                        location=findPic(os.path.join('JS','success.jpg'),1)
+                        if location:
+                            click(location)
+                            TaskStat[name] += 1
+                            VmStat[id][name]=1
+                            suc = True
+                            break
+                        location=findPic(os.path.join('JS','success1.jpg'),1)
+                        if location:
+                            click(location)
+                            TaskStat[name] += 1
+                            VmStat[id][name]=1
+                            suc = True
+                            break
+                        location=findPic(os.path.join('JS','finish.jpg'),1)
+                        if location:
+                            if name in TaskStat:
+                                del TaskStat[name]
+                            break
+                    if suc:
                         break
                 time.sleep(1)
             else:
@@ -624,5 +760,6 @@ if __name__ == '__main__':
         if os.path.exists('config.json'):
             jsObj = open('config.json').read()
             Config = json.loads(jsObj)
+        getAllVMsInfo()
         func = eval(sys.argv[1])
         func(*args)

@@ -1,31 +1,35 @@
 {
     "island": {
-    "nn": "#v8zBe2Q7ea%"
+    "yy": "£¤b3Iu722Faa%",
+    "nn": "%r1Fiu8bmMb!"
     },
     "fruit": {
-    "nn": "£¤aDyneBiq7a%"
+    "nn": "£¤zE3jA5Qbyb%"
     },
     "zd": {
-    "yy": "#e9MVVA7EYb@",
-    "nn": "#a8Eqb02vfa@",
-    "rr": "%25jAi2mE2b@",
-    "ll": "%uBrFm9a2rb@",
-    "1": "%r9Zfe8Uz7a!",
-    "2": "%B4iuvBjEEa!",
-    "xh1": "%ZDNRV7FEaa!",
-    "xh2": "#n4M332jYfa%"
+    "yy": "#Q5FYz8vrna@",
+    "nn": "£¤B4qr30Beia£¤",
+    "rr": "#i5m2ZEZbaa%",
+    "ll": "£¤jA6uN0RjAa£¤"
     },
     "qm": {
-    "yy": "£¤e5y3J6ynQb%",
-    "ll": "#aDYNZAfeMb@"
+    "yy": "#7EiUB7y7ia@"
     },
     "lxj": {
-    "yy": "%75Ybq5vvja!",
-    "rr": "%v3zFqDvByb!",
-    "nn": "#7CMrr1naMb@"
+    "yy": "#E1IEu7vBia@",
+    "rr": "£¤fAmy3EzNJa£¤",
+    "ll": "£¤EFemEC6Eea£¤",
+    "nn": "#N6B2fBYrBa@"
+    },
+    "qjd": {
+    "yy": "£¤a9Y7YC3f6a%",
+    "ll": "#Z77y35zj6a@",
+    "nn": "£¤vCNbyAz72b£¤",
+    "rr": "£¤iEQRjEqFyb£¤"
     },
     "wxj": {
-    "1": "%z6Nvb72NRb!"
+    "1": "#e22rF7qvzb@",
+    "2": "#QAZJYDZbAa%"
     },
     "jt": {
     "ll": "%yEzJeBYvNb@",
@@ -39,14 +43,14 @@
     "yy": "#i1UzRENZzb%"
     },
     "tt": {
-    "yy": "#B1UZ39V3Ba%",
-    "nn": "#z27Uz5J2Nb%",
-    "rr": "#iC66u9rrJa%"
+    "yy": "£¤a9uVF6qfIa£¤",
+    "nn": "£¤U2v76EE6Mb£¤",
+    "ll": "#20zR77QNfa%"
     },
     "fxj": {
-    "yy": "%30zrvDRN3b@",
-    "nn": "#v7ZVj42j2b%",
-    "ll": "%NCBYZ4RJIa!"
+    "yy": "#79Uje4UnQb%",
+    "nn": "#YBrzjFaE6a%",
+    "rr": "%N6Jm23NnAa!"
     },
     "sgj": {
     "yy": "#YBbURCjyRb@",
@@ -54,11 +58,18 @@
     "ll": "#aEiqr97qFa%",
     "nn": "§Ô§ÕR8NVN1V"
     },
+    "hb": {
+    "yy": "#F7YbmD6MNb@",
+    "rr": "#q03jmFqJQb%",
+    "ll": "£¤f0YVr33rFa%"
+    },
+    "dgs": {
+    "yy": "£¤y4nAEB6Iaa%"
+    },
     "ljd": {
     "yy": "#A2YnU17AYb@",
     "rr": "#r7ZB6CyJaa@",
-    "ll": "#y3RjuABAma%",
-    "nn": "§Ô§Õn9aiq1JIea%"
+    "ll": "#y3RjuABAma%"
     },
     "yy": {
     "yy": "#Q3JujCaMzb@"
@@ -66,7 +77,6 @@
     "dg": {
     "1": "£¤a4ubM4Zjia%",
     "2": "#B12ZZ5rRba%",
-    "3": "%u2BiU7F2fa!",
     "fanny": "£¤YE3jA1Uzja%"
     },
     "zg": {
@@ -88,5 +98,24 @@
     },
     "ysq": {
     "ll": "%jEaiE1UvJa!"
+    },
+    "sqdyj": {
+    "yy": "£¤JBEIYEvrna%"
+    },
+    "sqdyjtx": {
+    "yy": "#aDYju6ZJaa%",
+    "ll": "#bCMbQAVvBa%",
+    "nn": "£¤Y6FuVCFYvb%"
+    },
+    "ydh": {
+    "ll": "#Y2bYj9yZRb%",
+    "nn": "#u17ur33FQb%",
+    "rr": "#uErv762Jub@",
+    "yy": "£¤z0NVF1eIub%"
+    },
+    "by": {
+    "1": "#R43Z3AfQrb@",
+    "2": "£¤64I2r8Rfyb£¤",
+    "3": "£¤U5Rr38BAEa%"
     }
 }
