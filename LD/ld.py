@@ -27,6 +27,7 @@ TaskStat = {}
 VmStat = {}
 Config = {}
 LDConsle = "J:\leidian\ldconsole.exe"
+#LDConsle = "L:\leidian\ldconsole.exe"
 APPS = {
     "QQ" : "com.tencent.mobileqq",
     "WX" : "com.tencent.mm",
@@ -111,17 +112,14 @@ def clickPic(image,timeout=3,cfd=0.7,double=1):
 def inAndroid(id):
     cmd = "%s list2" % (LDConsle)
     #print(cmd)
+    runStat = {}
     p = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
-    out,err = p.communicate()
-    sp = out.splitlines()
-    #print(sp[id])
-    if id>=len(sp):
-        print(id, len(sp))
-        return 0
-    line = sp[id]
-    #print(line)
-    flag = str(line,'gb2312').split(",")[4]
-    return int(flag)
+    buf,err = p.communicate()
+    
+    for line in buf.splitlines():
+        items = str(line,'gb2312').split(",")
+        if id==int(items[0]):
+            return int(items[4]),int(items[6])
 
 def createVM(id):
     os.system("%s add" % (LDConsle))
@@ -142,16 +140,23 @@ def startVM(id):
     os.system("%s launch --index %d" % (LDConsle, id))
     
 def checkVMRunning(id):
+    count = 0
     while 1:
-        flag=inAndroid(id)
-        if flag:
+        flag1,flag2=inAndroid(id)
+        if flag1==1:
             break
+        elif flag1==0 and flag2==-1:
+            count += 1
+            if count>5:
+                rebootVM(id)
+                count = 0
         time.sleep(0.5)
 
 def closeVM(id):
     os.system("%s quit --index %d" % (LDConsle, id))
 
 def rebootVM(id):
+    print("rebootVM")
     os.system("%s reboot --index %d" % (LDConsle, id))
 
 def closeAllVM():
@@ -172,24 +177,31 @@ def getRunVMsNum():
     p.close()
 
 def minVM(id):
-    hwnd = win32gui.FindWindow("LDPlayerMainFrame", VmInfo[str(id)])
+    while 1:
+        hwnd = win32gui.FindWindow("LDPlayerMainFrame", VmInfo[str(id)])
 
-    if hwnd == 0:
+        if hwnd != 0:
+            break
         print("Can't find window:%s" % VmInfo[str(id)])
-        return
+        time.sleep(0.5)
     
     win32gui.ShowWindow(hwnd, win32con.SW_SHOWMINIMIZED)
     win32gui.SetForegroundWindow(hwnd)  # 设置前置窗口
     
 def normalVM(id):
-    hwnd = win32gui.FindWindow("LDPlayerMainFrame", VmInfo[str(id)])
+    for i in range(10):
+        hwnd = win32gui.FindWindow("LDPlayerMainFrame", VmInfo[str(id)])
 
-    if hwnd == 0:
+        if hwnd != 0:
+            break
         print("Can't find window:%s" % VmInfo[str(id)])
-        return
+        time.sleep(0.5)
     
     win32gui.ShowWindow(hwnd, win32con.SW_SHOWNORMAL)
     win32gui.SetForegroundWindow(hwnd)  # 设置前置窗口
+    if win32gui.IsIconic(hwnd):
+        print("Reboot VM")
+        rebootVM(id)
 
 def runApp(id, appName):
     os.system("%s runapp --index %d --packagename %s" % (LDConsle, id, APPS[appName]))
@@ -276,17 +288,20 @@ def failIter(task, id):
 def getList(app, reverse=False):
     allIds = []
     if app=="JD":
-        allIds = list(range(2,7)) + list(range(9,EID))
-        removeIds = [10, 12, 43, 47, 53]
+        allIds = list(range(0,EID))
+        removeIds = [1, 7, 8, 9, 10, 12, 43, 47, 53]
     if app=="JS":
-        allIds = list(range(2,10))+list(range(13,EID))+ [11]
-        removeIds = [7, 8, 43, 47, 53]
+        allIds = list(range(0,EID))
+        removeIds = [1, 7, 8, 12, 43, 47, 53]
     if app=="JR":
         allIds = list(range(2,EID))
         removeIds = [10, 27, 43]
     if app=="JX":
         allIds = list(range(7,53))
-        removeIds = [9, 10, 23, 34, 38] + list(range(41,44))
+        removeIds = [9, 10, 34, 38] + list(range(41,44))
+    if app=="JX-TTQ":
+        allIds = list(range(14,32))+[56,57,58,60,61,66,69,71,72,73,75]
+        removeIds = [30]
     if app=="WX":
         allIds = [2,3,6,13,14]+list(range(25,40))+list(range(44,70))
         removeIds = [26, 30, 31, 34, 38] + list(range(54,59))
@@ -324,10 +339,12 @@ def sendWechatMsg(title, msg):
 
 def template(appName, task, pics, maxHitCount=100, maxHelpCount=3, rev=False):
     allVMs = getList(appName, rev)
-    
+    if appName=="JX-TTQ":
+        appName="JX"
     id = allVMs[0]
     startVM(allVMs[0])
     del allVMs[0]
+    allVMs.append(id)
     for nextId in allVMs:
         waitTime = 60
         limit = 0
@@ -577,6 +594,16 @@ def island():
     pics['finish'] = 'island_finish.jpg'
     template('JX', 'island', pics, 100, 1)
 
+#88
+def ttq():
+    pics = {}
+    pics['view'] = 'view.jpg'
+    pics['update'] = 'update.jpg'
+    pics['help'] = 'ttq_help.jpg'
+    pics['success'] = 'ttq_success.jpg'
+    pics['finish'] = 'ttq_finish.jpg'
+    template('JX-TTQ', 'ttq', pics, 100, 3)
+
 def ttN():
     pics = {}
     pics['view'] = 'view.jpg'
@@ -619,8 +646,15 @@ def tt():
     '''
     allVMs = getList("JS")
     
-    for id in allVMs:
-        startVM(id)
+    id = allVMs[0]
+    startVM(allVMs[0])
+    del allVMs[0]
+    allVMs.append(id)
+    for nextId in allVMs:
+        startVM(nextId)
+        checkVMRunning(id)
+        normalVM(id)
+        minVM(nextId)
         items = tokenIter('tt', id, 100)
         failItems = failIter('tt',id)
         while 1:
@@ -704,6 +738,7 @@ def tt():
                 break
             returnHome(id, "JS")
         print(VmStat)
+        id = nextId
         if not TaskStat:
             break
 
