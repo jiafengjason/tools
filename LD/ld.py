@@ -15,19 +15,21 @@ from skimage.measure import compare_ssim
 import cv2
 import win32con
 import win32gui
+import threading
 
 pyautogui.PAUSE = 0.1
 pyautogui.FAILSAFE = True
 
 SID=0
-EID=76
+EID=78
 LDFolder = 'LD4'
 VmInfo = {}
+VmInfo2 = {}
 TaskStat = {}
 VmStat = {}
 Config = {}
 LDConsle = "J:\leidian\ldconsole.exe"
-#LDConsle = "L:\leidian\ldconsole.exe"
+LDConsle2 = "L:\leidian\ldconsole.exe"
 APPS = {
     "QQ" : "com.tencent.mobileqq",
     "WX" : "com.tencent.mm",
@@ -110,7 +112,10 @@ def clickPic(image,timeout=3,cfd=0.7,double=1):
     return click(location)
 
 def inAndroid(id):
-    cmd = "%s list2" % (LDConsle)
+    if id < 67:
+        cmd = "%s list2" % (LDConsle)
+    else:
+        cmd = "%s list2" % (LDConsle2)
     #print(cmd)
     runStat = {}
     p = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
@@ -122,10 +127,10 @@ def inAndroid(id):
             return int(items[4]),int(items[6])
 
 def createVM(id):
-    os.system("%s add" % (LDConsle))
+    os.system("%s add" % (LDConsle2))
 
 def newVM():
-    cmd = "%s list2" % (LDConsle)
+    cmd = "%s list2" % (LDConsle2)
     p = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
     out,err = p.communicate()
     sp = out.splitlines()
@@ -137,8 +142,11 @@ def newVM():
         installApp(id, appName)
 
 def startVM(id):
-    os.system("%s launch --index %d" % (LDConsle, id))
-    
+    if id < 67:
+        os.system("%s launch --index %d" % (LDConsle, id))
+    else:
+        os.system("%s launch --index %d" % (LDConsle2, id))
+
 def checkVMRunning(id):
     count = 0
     while 1:
@@ -153,14 +161,21 @@ def checkVMRunning(id):
         time.sleep(0.5)
 
 def closeVM(id):
-    os.system("%s quit --index %d" % (LDConsle, id))
+    if id < 67:
+        os.system("%s quit --index %d" % (LDConsle, id))
+    else:
+        os.system("%s quit --index %d" % (LDConsle2, id))
 
 def rebootVM(id):
     print("rebootVM")
-    os.system("%s reboot --index %d" % (LDConsle, id))
+    if id < 67:
+        os.system("%s reboot --index %d" % (LDConsle, id))
+    else:
+        os.system("%s reboot --index %d" % (LDConsle2, id))
 
 def closeAllVM():
     os.system("%s quitall" % (LDConsle))
+    os.system("%s quitall" % (LDConsle2))
 
 def getAllVMsInfo():
     p=os.popen("%s list2" % (LDConsle))
@@ -168,6 +183,13 @@ def getAllVMsInfo():
     for line in buf.splitlines():
         items = line.split(",")
         VmInfo[items[0]]=items[1]
+    p.close()
+    
+    p=os.popen("%s list2" % (LDConsle2))
+    buf=p.read()
+    for line in buf.splitlines():
+        items = line.split(",")
+        VmInfo2[items[0]]=items[1]
     p.close()
 
 def getRunVMsNum():
@@ -178,11 +200,14 @@ def getRunVMsNum():
 
 def minVM(id):
     while 1:
-        hwnd = win32gui.FindWindow("LDPlayerMainFrame", VmInfo[str(id)])
+        if id < 67:
+            hwnd = win32gui.FindWindow("LDPlayerMainFrame", VmInfo[str(id)])
+        else:
+            hwnd = win32gui.FindWindow("LDPlayerMainFrame", VmInfo2[str(id)])
 
         if hwnd != 0:
             break
-        print("Can't find window:%s" % VmInfo[str(id)])
+        #print("Can't find window:%s" % VmInfo[str(id)])
         time.sleep(0.5)
     
     win32gui.ShowWindow(hwnd, win32con.SW_SHOWMINIMIZED)
@@ -190,11 +215,14 @@ def minVM(id):
     
 def normalVM(id):
     for i in range(10):
-        hwnd = win32gui.FindWindow("LDPlayerMainFrame", VmInfo[str(id)])
+        if id < 67:
+            hwnd = win32gui.FindWindow("LDPlayerMainFrame", VmInfo[str(id)])
+        else:
+            hwnd = win32gui.FindWindow("LDPlayerMainFrame", VmInfo2[str(id)])
 
         if hwnd != 0:
             break
-        print("Can't find window:%s" % VmInfo[str(id)])
+        #print("Can't find window:%s" % VmInfo[str(id)])
         time.sleep(0.5)
     
     win32gui.ShowWindow(hwnd, win32con.SW_SHOWNORMAL)
@@ -204,13 +232,19 @@ def normalVM(id):
         rebootVM(id)
 
 def runApp(id, appName):
-    os.system("%s runapp --index %d --packagename %s" % (LDConsle, id, APPS[appName]))
+    if id < 67:
+        os.system("%s runapp --index %d --packagename %s" % (LDConsle, id, APPS[appName]))
+    else:
+        os.system("%s runapp --index %d --packagename %s" % (LDConsle2, id, APPS[appName]))
 
 def killApp(id, appName):
-    os.system("%s killapp --index %d --packagename %s" % (LDConsle, id, APPS[appName]))
+    if id < 67:
+        os.system("%s killapp --index %d --packagename %s" % (LDConsle, id, APPS[appName]))
+    else:
+        os.system("%s killapp --index %d --packagename %s" % (LDConsle2, id, APPS[appName]))
 
 def installApp(id, appName):
-    os.system("%s installapp --index %d --filename apk/%s.apk" % (LDConsle, id, appName))
+    os.system("%s installapp --index %d --filename apk/%s.apk" % (LDConsle2, id, appName))
 
 def returnHome(id, appName):
     '''
@@ -227,7 +261,10 @@ def returnHome(id, appName):
         duration = end - start
         print(duration)
         if (not isKill) and (not isReboot):
-            os.system("%s action --index %d --key call.keyboard --value back" % (LDConsle, id))
+            if id < 67:
+                os.system("%s action --index %d --key call.keyboard --value back" % (LDConsle, id))
+            else:
+                os.system("%s action --index %d --key call.keyboard --value back" % (LDConsle2, id))
             #pyautogui.press('esc')
         if (not isKill) and duration>10:
             print("killApp %s" % appName)
@@ -289,22 +326,25 @@ def getList(app, reverse=False):
     allIds = []
     if app=="JD":
         allIds = list(range(0,EID))
-        removeIds = [1, 7, 8, 9, 10, 12, 43, 47, 53]
+        removeIds = [1, 8, 9, 12, 53, 77]
     if app=="JS":
         allIds = list(range(0,EID))
-        removeIds = [1, 7, 8, 12, 43, 47, 53]
+        removeIds = [1, 8, 12, 47, 53]
     if app=="JR":
         allIds = list(range(2,EID))
         removeIds = [10, 27, 43]
     if app=="JX":
-        allIds = list(range(7,53))
+        allIds = list(range(8,53))
         removeIds = [9, 10, 34, 38] + list(range(41,44))
     if app=="JX-TTQ":
-        allIds = list(range(14,32))+[56,57,58,60,61,66,69,71,72,73,75]
-        removeIds = [30]
+        allIds = list(range(14,32))+[56,57,58,60,66,69,71,72,75]
+        removeIds = [19, 30]
     if app=="WX":
-        allIds = [2,3,6,13,14]+list(range(25,40))+list(range(44,70))
-        removeIds = [26, 30, 31, 34, 38] + list(range(54,59))
+        allIds = [0,3,4,6,7,10,13,14]+list(range(25,40))+list(range(44,77))
+        removeIds = [26, 30, 31, 34, 38, 74] + list(range(53,59))
+    if app=="QQ":
+        allIds = [2,5,10,19,20,24,25,27,34,36,38,39,40,70,71]+list(range(38,63))
+        removeIds = [43,45,47,51,54,57,58,60]
     allIds = list(set(allIds) - set(removeIds))
     allIds = [id for id in allIds if id>=SID]
     allIds.sort()
@@ -315,10 +355,12 @@ def getList(app, reverse=False):
     return allIds
 
 def handleError():
-    if findPic(os.path.join(LDFolder, "error.jpg"),1):
-        location=findPic(os.path.join(LDFolder, "ok.jpg"),1)
-        if location:
-            click(location)
+    while True:
+        if findPic(os.path.join(LDFolder, "error.jpg"),1):
+            location=findPic(os.path.join(LDFolder, "ok.jpg"),1)
+            if location:
+                click(location)
+        time.sleep(10)
 
 def shutdown():
     os.system("shutdown -s -t 0")
@@ -353,7 +395,6 @@ def template(appName, task, pics, maxHitCount=100, maxHelpCount=3, rev=False):
         checkVMRunning(id)
         normalVM(id)
         minVM(nextId)
-        handleError()
         items = tokenIter(task, id, maxHitCount, rev)
         failItems = failIter(task, id)
         while 1:
@@ -480,8 +521,17 @@ def zd():
 def qm():
     pics = {}
     pics['view'] = 'view.jpg'
-    pics['success'] = ['qm_success.jpg', 'qm_success1.jpg']
-    template('JD', 'qm', pics, 58, 1)
+    pics['help'] = 'qm_help.jpg'
+    pics['success'] = ['qm_success.jpg']
+    template('JD', 'qm', pics, 100, 1)
+
+def lfl():
+    pics = {}
+    pics['view'] = 'view.jpg'
+    pics['help'] = 'lfl_help.jpg'
+    pics['success'] = 'lfl_success.jpg'
+    pics['finish'] = 'lfl_finish.jpg'
+    template('JD', 'lfl', pics, 100, 2)
 
 def lxj():
     pics = {}
@@ -510,7 +560,7 @@ def zns():
     pics['help'] = 'zns_help.jpg'
     pics['success'] = 'zns_success.jpg'
     pics['finish'] = 'zns_finish.jpg'
-    template('JD', 'zns', pics, 10)
+    template('JD', 'zns', pics, 88, 3)
 
 #守护
 def sh():
@@ -526,7 +576,7 @@ def fxj():
     pics = {}
     pics['view'] = 'view.jpg'
     pics['success'] = ['fxj_success.jpg', 'fxj_success1.jpg']
-    template('JD', 'fxj', pics, 55, 3)
+    template('JD', 'fxj', pics, 100, 3)
 
 def hb():
     pics = {}
@@ -534,7 +584,30 @@ def hb():
     pics['help'] = 'hb_help.jpg'
     pics['success'] = ['hb_success.jpg']
     pics['finish'] = 'hb_finish.jpg'
-    template('JD', 'hb', pics, 25, 4)
+    template('JD', 'hb', pics, 15, 3)
+
+#集卡
+def jk():
+    pics = {}
+    pics['view'] = 'view.jpg'
+    pics['help'] = 'jk_help.jpg'
+    pics['success'] = ['jk_success.jpg']
+    template('JD', 'jk', pics, 10, 3)
+
+def pz():
+    pics = {}
+    pics['view'] = 'view.jpg'
+    pics['help'] = 'pz_help.jpg'
+    pics['success'] = ['pz_success.jpg']
+    template('JD', 'pz', pics, 50, 1)
+
+#集火力
+def jhl():
+    pics = {}
+    pics['view'] = 'view.jpg'
+    pics['help'] = 'jhl_help.jpg'
+    pics['success'] = ['jhl_success.jpg']
+    template('JD', 'jhl', pics, 50, 3)
 
 def dgs():
     pics = {}
@@ -563,10 +636,17 @@ def by():
 def qjd():
     pics = {}
     pics['view'] = 'view.jpg'
-    pics['help'] = 'qjd_help.jpg'
+
     pics['success'] = ['qjd_success.jpg']
     pics['finish'] = 'qjd_finish.jpg'
     template('JD', 'qjd', pics, 100, 3)
+
+def nzj():
+    pics = {}
+    pics['view'] = 'view.jpg'
+    pics['success'] = ['nzj_success.jpg']
+    pics['finish'] = 'nzj_finish.jpg'
+    template('JD', 'nzj', pics, 100, 3)
 
 #打工
 def dg():
@@ -599,7 +679,7 @@ def ttq():
     pics = {}
     pics['view'] = 'view.jpg'
     pics['update'] = 'update.jpg'
-    pics['help'] = 'ttq_help.jpg'
+    #pics['help'] = 'ttq_help.jpg'
     pics['success'] = 'ttq_success.jpg'
     pics['finish'] = 'ttq_finish.jpg'
     template('JX-TTQ', 'ttq', pics, 100, 3)
@@ -616,7 +696,7 @@ def sqdyj():
     pics = {}
     pics['view'] = 'view.jpg'
     pics['help'] = 'sqdyj_help.jpg'
-    pics['success'] = ['sqdyj_success.jpg', 'sqdyj_success1.jpg']
+    pics['success'] = ['sqdyj_success.jpg', 'sqdyj_success1.jpg', 'sqdyj_success2.jpg']
     pics['finish'] = 'sqdyj_finish.jpg'
     template('JS', 'sqdyj', pics, 100, 1)
 
@@ -626,7 +706,7 @@ def sqdyjtx():
     pics['help'] = 'sqdyjtx_help.jpg'
     pics['success'] = 'sqdyjtx_success.jpg'
     #pics['finish'] = 'sqdyj_finish.jpg'
-    template('JS', 'sqdyjtx', pics, 50, 3)
+    template('JS', 'sqdyjtx', pics, 40, 1)
     
 def tt():
     '''
@@ -742,6 +822,29 @@ def tt():
         if not TaskStat:
             break
 
+def qq():
+    allVMs = getList("QQ")
+    '''
+    for i in range(0,len(allVMs),3):
+        group=allVMs[i:i+3]
+        for id in group:
+            startVM(id)
+            runApp(id, "WX")
+        time.sleep(60)
+        for id in group:
+            closeVM(id)
+    '''
+    index = 0
+    for id in allVMs:
+        startVM(id)
+        runApp(id, "QQ")
+        if index>=2:
+            closeVM(allVMs[index-2])
+        time.sleep(30)
+        index += 1
+    time.sleep(60)
+    closeAllVM()
+
 def wx():
     allVMs = getList("WX")
     '''
@@ -757,10 +860,34 @@ def wx():
     index = 0
     for id in allVMs:
         startVM(id)
+        checkVMRunning(id)
         runApp(id, "WX")
         if index>=2:
             closeVM(allVMs[index-2])
         time.sleep(30)
+        index += 1
+    time.sleep(60)
+    closeAllVM()
+
+def jd():
+    allVMs = getList("JD")
+    '''
+    for i in range(0,len(allVMs),3):
+        group=allVMs[i:i+3]
+        for id in group:
+            startVM(id)
+            runApp(id, "WX")
+        time.sleep(60)
+        for id in group:
+            closeVM(id)
+    '''
+    index = 0
+    for id in allVMs:
+        startVM(id)
+        installApp(id, "JD")
+        if index>=2:
+            closeVM(allVMs[index-2])
+        time.sleep(15)
         index += 1
     time.sleep(60)
     closeAllVM()
@@ -777,6 +904,8 @@ def compare_image(path_image1, path_image2):
     return score
 
 if __name__ == '__main__':
+    thread_list = []
+
     if len(sys.argv)<2:
         sys.exit()
     else:
@@ -797,4 +926,22 @@ if __name__ == '__main__':
             Config = json.loads(jsObj)
         getAllVMsInfo()
         func = eval(sys.argv[1])
-        func(*args)
+        
+        t1= threading.Thread(target=func, args=(*args,))
+        thread_list.append(t1)
+        
+        t2= threading.Thread(target=handleError)
+        thread_list.append(t2)
+        
+        t1.start()
+        t2.start()
+        
+        t1.join()
+
+        '''
+        for t in thread_list:
+            t.setDaemon(True)  # 设置为守护线程，不会因主线程结束而中断
+            t.start()
+        for t in thread_list:
+            t.join()  # 子线程全部加入，主线程等所有子线程运行完毕
+        '''
